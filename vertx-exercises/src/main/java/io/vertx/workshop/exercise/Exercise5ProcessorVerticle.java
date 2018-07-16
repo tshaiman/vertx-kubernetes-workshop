@@ -12,7 +12,11 @@ public class Exercise5ProcessorVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         EventBus eventBus = vertx.eventBus();
-
+        eventBus.<String>consumer("greetings",msg->{
+           JsonObject json = new JsonObject();
+           json.put("message","hello " + msg.body());
+           msg.reply(json);
+        });
         // Register a consumer and call the `reply` method with a JSON object containing the greeting message. ~
         // parameter is passed in the incoming message body (a name). For example, if the incoming message is the
         // String "vert.x", the reply contains: `{"message" : "hello vert.x"}`.

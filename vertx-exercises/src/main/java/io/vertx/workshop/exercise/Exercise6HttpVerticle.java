@@ -1,9 +1,14 @@
 package io.vertx.workshop.exercise;
 
 import io.reactivex.Single;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.eventbus.EventBus;
+import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.core.http.HttpServer;
+
+import java.beans.EventHandler;
 
 /**
  * A verticle using the request-reply event bus delivery mechanism to handle HTTP requests.
@@ -15,10 +20,19 @@ public class Exercise6HttpVerticle extends AbstractVerticle {
         vertx.createHttpServer()
             .requestHandler(req -> {
                 String name = req.getParam("name");
-                if (name == null) {
+                if (name == null || name.isEmpty()) {
                     name = "world";
                 }
-
+                EventBus eventBus = vertx.eventBus();
+                eventBus.<JsonObject>rxSend("greetings",name)
+                        .map(s-> s.body().encode())
+                        .subscribe((res,err)-> {
+                           if(err != null) {
+                               req.response().setStatusCode(500).end(err.getMessage());
+                           }else {
+                               req.response().end(res );
+                           }
+                        });
                 // Send a message on the event bus using the `send` method. Pass a reply handler receiving the
                 // response. As the expected object is a Json structure, you can use `vertx.eventBus()
                 // .<JsonObject>send(...`).

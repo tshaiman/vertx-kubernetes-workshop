@@ -1,6 +1,7 @@
 package io.vertx.workshop.exercise;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -14,5 +15,9 @@ public class Exercise4ReceiverVerticle extends AbstractVerticle {
         // the console. You can retrieve the message body using `body()`. Use the method `encodePrettily`
         // on the retrieved Json body to print it nicely.
         // TODO
+
+        vertx.eventBus().<JsonObject>consumer("greetings", msg -> {
+            System.out.println(msg.body().encodePrettily());
+        });
     }
 }

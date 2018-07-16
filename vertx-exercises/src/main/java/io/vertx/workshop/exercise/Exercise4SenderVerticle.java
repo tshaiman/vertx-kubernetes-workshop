@@ -16,16 +16,23 @@ public class Exercise4SenderVerticle extends AbstractVerticle {
 
         // Execute the given handler every 2000 ms
         vertx.setPeriodic(2000, l -> {
+
             // Use the eventBus() method to retrieve the event bus and send a "{"message":hello"} JSON message on the
             // "greetings" address.
 
+
             // 1 - Create the JSON object using the JsonObject class, and `put` the 'message':'hello' entry
             // TODO
+            JsonObject json = new JsonObject();
+            json.put("message","hello");
+            json.put("app.ts",System.nanoTime());
+            json.put("app.id","A542");
 
             // 2 - Use the `send` method of the event bus to _send_ the message. Messages sent with the `send` method
             // are received by a single consumer. Messages sent with the `publish` method are received by all
             // registered consumers.
             // TODO
+            eventBus.send("greetings",json);
             
         });
     }

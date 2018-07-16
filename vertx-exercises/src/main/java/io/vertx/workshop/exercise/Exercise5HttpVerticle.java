@@ -1,6 +1,7 @@
 package io.vertx.workshop.exercise;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -16,7 +17,19 @@ public class Exercise5HttpVerticle extends AbstractVerticle {
                 // 1 - Retrieve the `name` (query) parameter, set it to `world if null`. You can retrieve the
                 // parameter using: `req.getParam()`
                 // TODO
+                String name = req.getParam("name");
+                if (name == null || name.isEmpty())
+                    name = "world";
 
+                EventBus eventBus = vertx.eventBus();
+                eventBus.<JsonObject>send("greetings",name,reply -> {
+                    if(reply.failed()){
+                        req.response().setStatusCode(500).end(reply.cause().getMessage());
+                    }
+                    else {
+                        req.response().setStatusCode(200).end(reply.result().body().encode());
+                    }
+                });
                 // 2 - Send a message on the event bus using the `send` method. Pass a reply handler receiving the
                 // response. As the expected object is a Json structure, you can use `vertx.eventBus()
                 // .<JsonObject>send(...`).

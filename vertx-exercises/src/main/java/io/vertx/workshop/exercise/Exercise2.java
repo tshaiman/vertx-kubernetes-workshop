@@ -10,10 +10,10 @@ public class Exercise2 {
 
     public static void main(String[] args) {
         // 1 - Create the Vert.x instance using Vertx.vertx (use io.vertx.core.Vertx)
-        // TODO
+        Vertx vertx = Vertx.vertx();
 
         // 2 - Deploy the `Exercise2Verticle` verticle using: vertx.deployVerticle(className);
-        // TODO
+        vertx.deployVerticle(Exercise2Verticle.class.getName());
     }
 
 }
